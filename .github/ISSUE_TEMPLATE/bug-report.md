@@ -41,6 +41,6 @@ assignees: ''
 
 <!-- A clear and concise description. -->
 
-**Contribute to [@rokartur/httpie-request-manager](https://github.com/rokartur/httpie-request-manager)**
+**Contribute to [@rokartur/zsh-httpie-request-manager](https://github.com/rokartur/zsh-httpie-request-manager)**
 
 - [ ] I'm willing to fix this bug 🥇
