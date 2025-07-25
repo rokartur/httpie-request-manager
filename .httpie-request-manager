@@ -1,37 +1,55 @@
 #!/bin/zsh
 
-# httpie configuration
-_httpie_orig='/opt/homebrew/bin/http'
+# configuration
+_http_path='/opt/homebrew/bin/http'
+_https_path='/opt/homebrew/bin/https'
 
 function http() {
-  # fzf picker for .http files
-  if [[ "$1" == list ]]; then
-    local base_dir="$HOME/.httpie/requests"
-    [[ ! -d "$base_dir" ]] && mkdir -p "$base_dir"
-    local file
-    file=$(
-      find "$base_dir" -type f -name '*.http' -exec ls -1t {} + \
-      | fzf --preview 'bat --color=always --style=numbers {}' \
-          --height=40% --border \
-          --bind 'ctrl-d:execute(trash {})+reload(find '"$base_dir"' -type f -name "*.http" -exec ls -1t {} + | tail -r)' \
-          --bind 'ctrl-e:execute(vim {})+reload(find '"$base_dir"' -type f -name "*.http" -exec ls -1t {} + | tail -r)+refresh-preview'
-    )
-    if [[ -n "$file" ]]; then
-      http "$file" "${@:2}"
-    fi
-    return
-  fi
+  _httpie_wrapper "$_http_path" "$@"
+}
 
+function https() {
+  _httpie_wrapper "$_https_path" "$@"
+}
+
+function _httpie_wrapper() {
+  local httpie_cmd="$1"; shift
+  
   # save request to .http file
   local base_dir="$HOME/.httpie/requests"
   [[ ! -d "$base_dir" ]] && mkdir -p "$base_dir"
 
-  local TIMESTAMP
-  TIMESTAMP=$(date +%Y_%m_%d_at_%H_%M_%S)
-  local REQUEST_FILE="${base_dir}/${TIMESTAMP}.http"
+  # fzf picker for .http files
+  if [[ "$1" == list ]]; then
+    local base_dir="$HOME/.httpie/requests"
+    echo -e "Searching for .http files in $base_dir\n"
+    [[ ! -d "$base_dir" ]] && mkdir -p "$base_dir"
+    local file
+    file=$(
+      find "$base_dir" -type f -name '*.http' \
+      | fzf --preview 'bat --color=always --style=numbers {}' \
+        --height=40% --border \
+        --bind 'ctrl-x:execute(rm {})+reload(find '"$base_dir"' -type f -name "*.http")' \
+        --bind 'ctrl-e:execute(nvim {})+reload(find '"$base_dir"' -type f -name "*.http")+refresh-preview'
+    )
+    if [[ -n "$file" ]]; then
+      echo -e "Selected file: $file\n"
 
-  "$_httpie_orig" --offline "$@" > "$REQUEST_FILE"
-  echo "Request saved to: $REQUEST_FILE"
+      _httpie_wrapper "$httpie_cmd" "$file" ${@:2}
+    else
+      echo -e "No file selected."
+    fi
+    return
+  fi
+
+  # save request only if first argument is not a file
+  if [[ "$1" != *.http || ! -f "$1" ]]; then
+    local TIMESTAMP
+    TIMESTAMP=$(date +%Y_%m_%d_at_%H_%M_%S)
+    local REQUEST_FILE="${base_dir}/${TIMESTAMP}.http"
+
+    "$httpie_cmd" --offline "$@" > "$REQUEST_FILE"
+  fi
 
   # parsing the .http file
   if [[ "$1" == *.http && -f "$1" ]]; then
@@ -114,10 +132,10 @@ function http() {
     fi
 
     # executing httpie with parsed arguments
-    eval "$_httpie_orig ${args[@]} $@"
+    eval "$httpie_cmd ${args[@]} $@"
     return
   fi
 
   # original httpie command
-  $_httpie_orig "$@"
+  $httpie_cmd "$@"
 }
