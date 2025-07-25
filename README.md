@@ -23,23 +23,11 @@ Make sure you have the following tools installed:
 brew install httpie fzf bat
 ```
 
-### Setup
+### Plugin Installation
 
-1. Clone this repository:
+Create a new directory in `$ZSH_CUSTOM/plugins` called `zsh-httpie-request-manager` and clone this repo into that directory.
 ```bash
-git clone https://github.com/rokartur/httpie-request-manager.git
-cd httpie-request-manager
-```
-
-2. Make the script executable:
-```bash
-chmod +x .httpie-request-manager
-```
-
-3. Source the script in your shell configuration file (`.zshrc`, `.bashrc`, etc.):
-```bash
-echo "source $(pwd)/.httpie-request-manager" >> ~/.zshrc
-source ~/.zshrc
+git clone https://github.com/rokartur/zsh-httpie-request-manager.git $ZSH_CUSTOM/plugins/zsh-httpie-request-manager
 ```
 
 ## Usage
