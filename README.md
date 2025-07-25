@@ -86,20 +86,6 @@ Accept: application/json
 
 ```
 
-## How It Works
-
-The script wraps the original HTTPie command and provides three main functionalities:
-
-1. **Auto-save**: Intercepts HTTPie commands and saves them as `.http` files using `--offline` mode
-2. **Interactive browser**: Uses fzf to provide a searchable interface for saved requests with live reload
-3. **Request parsing**: Parses `.http` files and converts them back to HTTPie command arguments with proper JSON handling
-
-### Key Features:
-- **Automatic HTTPie detection**: Uses `/opt/homebrew/bin/http` and `/opt/homebrew/bin/https` paths
-- **Smart request parsing**: Handles headers, body content, and JSON detection
-- **Live file operations**: Real-time file deletion and editing with immediate refresh
-- **Raw body support**: Preserves original request body formatting
-
 ## Contributing
 
 We welcome contributions! Here are some ways you can help:
@@ -116,28 +102,6 @@ We welcome contributions! Here are some ways you can help:
 5. Commit your changes: `git commit -m 'Add amazing feature'`
 6. Push to the branch: `git push origin feature/amazing-feature`
 7. Open a Pull Request
-
-## Customization
-
-You can customize the behavior by modifying variables in the [.httpie-request-manager](.httpie-request-manager) script:
-
-```bash
-# Change HTTPie paths
-_http_path='/opt/homebrew/bin/http'
-_https_path='/opt/homebrew/bin/https'
-
-# Change storage location
-base_dir="$HOME/.httpie/requests"
-
-# Modify timestamp format
-TIMESTAMP=$(date +%Y_%m_%d_at_%H_%M_%S)
-
-# Customize fzf options and key bindings
-fzf --preview 'bat --color=always --style=numbers {}' \
-    --height=40% --border \
-    --bind 'ctrl-x:execute(rm {})+reload(find '"$base_dir"' -type f -name "*.http")' \
-    --bind 'ctrl-e:execute(nvim {})+reload(find '"$base_dir"' -type f -name "*.http")+refresh-preview'
-```
 
 ## License
 
