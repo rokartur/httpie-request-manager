@@ -30,7 +30,7 @@ function _httpie_wrapper() {
       | fzf --preview 'bat --color=always --style=numbers {}' \
         --height=40% --border \
         --bind 'ctrl-x:execute(rm {})+reload(find '"$base_dir"' -type f -name "*.http")' \
-        --bind 'ctrl-e:execute(nvim {})+reload(find '"$base_dir"' -type f -name "*.http")+refresh-preview'
+        --bind 'ctrl-e:execute(vim {})+reload(find '"$base_dir"' -type f -name "*.http")+refresh-preview'
     )
     if [[ -n "$file" ]]; then
       echo -e "Selected file: $file\n"
