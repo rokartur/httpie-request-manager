@@ -42,15 +42,6 @@ function _httpie_wrapper() {
     return
   fi
 
-  # save request only if first argument is not a file
-  if [[ "$1" != *.http || ! -f "$1" ]]; then
-    local TIMESTAMP
-    TIMESTAMP=$(date +%Y_%m_%d_at_%H_%M_%S)
-    local REQUEST_FILE="${base_dir}/${TIMESTAMP}.http"
-
-    "$httpie_cmd" --offline "$@" > "$REQUEST_FILE"
-  fi
-
   # parsing the .http file
   if [[ "$1" == *.http && -f "$1" ]]; then
     local file="$1"; shift
@@ -136,6 +127,25 @@ function _httpie_wrapper() {
     return
   fi
 
-  # original httpie command
-  $httpie_cmd "$@"
+  # save request and execute original httpie command
+  if [[ $# -gt 0 ]]; then
+    local TIMESTAMP
+    TIMESTAMP=$(date +%Y_%m_%d_at_%H_%M_%S)
+    local REQUEST_FILE="${base_dir}/${TIMESTAMP}.http"
+
+    local fixed_args=()
+    for arg in "$@"; do
+      if [[ "$arg" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?$ && ! "$arg" =~ ^https?:// ]]; then
+        fixed_args+=("https://$arg")
+      else
+        fixed_args+=("$arg")
+      fi
+    done
+
+    "$httpie_cmd" --offline "${fixed_args[@]}" > "$REQUEST_FILE"
+    
+    "$httpie_cmd" "${fixed_args[@]}"
+  else
+    "$httpie_cmd"
+  fi
 }
