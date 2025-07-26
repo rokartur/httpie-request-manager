@@ -21,9 +21,7 @@ function _httpie_wrapper() {
 
   # fzf picker for .http files
   if [[ "$1" == list ]]; then
-    local base_dir="$HOME/.httpie/requests"
     echo -e "Searching for .http files in $base_dir\n"
-    [[ ! -d "$base_dir" ]] && mkdir -p "$base_dir"
     local file
     file=$(
       find "$base_dir" -type f -name '*.http' \
