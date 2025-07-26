@@ -54,7 +54,7 @@ http list
 # In the browser:
 # - Use arrow keys or type to search
 # - Press Enter to execute selected request
-# - Ctrl+E to edit the request file with nvim
+# - Ctrl+E to edit the request file with vim
 # - Ctrl+X to delete the request file
 ```
 
